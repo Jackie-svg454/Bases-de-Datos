@@ -1,0 +1,86 @@
+-- Tabla de Profesores
+CREATE TABLE profesores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL
+);
+
+-- Tabla de Cursos
+CREATE TABLE cursos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    id_profesor INT,
+    FOREIGN KEY (id_profesor) REFERENCES profesores(id) ON DELETE SET NULL
+);
+
+-- Tabla de Alumnos
+CREATE TABLE alumnos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL
+);
+
+-- Tabla de Calificaciones (Relación entre Alumnos y Cursos)
+CREATE TABLE calificaciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_alumno INT,
+    id_curso INT,
+    nota DECIMAL(5,2) CHECK(nota BETWEEN 0 AND 10), -- Nota entre 0 y 10
+    FOREIGN KEY (id_alumno) REFERENCES alumnos(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_curso) REFERENCES cursos(id) ON DELETE CASCADE
+);
+
+
+
+
+
+
+-- Insertar Profesores
+INSERT INTO profesores (nombre, email) VALUES 
+('Juan Pérez', 'juan.perez@escuela.com'),
+('María López', 'maria.lopez@escuela.com'),
+('Carlos Torres', 'carlos.torres@escuela.com'),
+('Ana Fernández', 'ana.fernandez@escuela.com'),
+('Pedro Ramírez', 'pedro.ramirez@escuela.com');
+
+-- Insertar Cursos (Asignando profesores)
+INSERT INTO cursos (nombre, id_profesor) VALUES
+('Matemáticas', 1),
+('Historia', 2),
+('Física', 3),
+('Química', 4),
+('Programación', 5);
+
+-- Insertar Alumnos
+INSERT INTO alumnos (nombre, email) VALUES
+('Luis González', 'luis.gonzalez@gmail.com'),
+('Andrea Martínez', 'andrea.martinez@gmail.com'),
+('Ricardo Sánchez', 'ricardo.sanchez@gmail.com'),
+('Fernanda Díaz', 'fernanda.diaz@gmail.com'),
+('Daniel Castro', 'daniel.castro@gmail.com');
+
+-- Insertar Calificaciones
+INSERT INTO calificaciones (id_alumno, id_curso, nota) VALUES
+(1, 1, 8.5),
+(2, 2, 9.0),
+(3, 3, 7.5),
+(4, 4, 6.8),
+(5, 5, 8.9);
+
+
+
+
+
+
+
+
+SELECT 
+    a.nombre AS Alumno,
+    c.nombre AS Curso,
+    p.nombre AS Profesor,
+    cal.nota AS Nota
+FROM calificaciones cal
+INNER JOIN alumnos a ON cal.id_alumno = a.id
+INNER JOIN cursos c ON cal.id_curso = c.id
+INNER JOIN profesores p ON c.id_profesor = p.id
+ORDER BY a.nombre;
